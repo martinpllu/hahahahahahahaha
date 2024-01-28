@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>HAHAHA Game</title>
-    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" /> -->
+    <title>HAHAHAHAHAHAHAHA Game</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
-            font-family: 'Comic Sans MS', cursive, sans-serif;
             margin: 0;
             padding: 0;
             display: flex;
@@ -18,13 +18,14 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 72px;
+            font-size: 2rem;
             text-align: center;
+            color: magenta;
         }
         #gameDisplay {
             flex-grow: 1;
             padding: 20px;
-            font-size: 60px;
+            font-size: 2rem;
             overflow-y: auto;
             outline: none; /* Remove blue border on focus */
             color: black; /* Default text color */
@@ -32,6 +33,7 @@
         }
         #gameDisplay.error {
             color: red; /* Text color when game is over */
+            opacity: 0.2;
         }
         #footer {
             background-color: #f8f8f8;
@@ -39,14 +41,14 @@
             text-align: center;
             position: sticky;
             bottom: 0;
-            font-size: 30px;
+            font-size: 1.5rem
         }
         #result {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 72px;
+            font-size: 2rem;
             text-align: center;
             display: none;
             color: black; /* Text color for game over message */
@@ -54,19 +56,22 @@
         .error {
             color: red;
         }
+        #tryAgainMessage {
+            color: magenta;
+        }
         .hidden {
             display: none;
         }
     </style>
 </head>
 <body>
-    <div id="startMessage">Start typing "hahahahaha"</div>
+    <div id="startMessage">Start typing hahahahahahahaha and keep going, as fast as you can!</div>
     <div id="gameDisplay" tabindex="0"></div> <!-- tabindex for focus -->
     <div id="footer"></div>
 
     <div id="result">
         <div id="gameOverMessage" class="hidden">Game Over!</div>
-        <div id="tryAgainMessage" class="hidden">TRY AGAIN!</div>
+        <div id="tryAgainMessage" class="hidden">START TYPING AGAIN!</div>
         <div id="scoreMessage" class="hidden"></div>
     </div>
 
@@ -126,8 +131,8 @@
             gameDisplay.classList.add('error');
             footer.style.display = 'none';
             const timeTaken = (new Date() - startTime) / 1000;
-            const score = calculateScore(Math.floor(gameDisplay.textContent.length / 2), timeTaken);
-            scoreMessage.innerHTML = `${Math.floor(gameDisplay.textContent.length / 2)} ha's<br/>${timeTaken.toFixed(2)}s<br>Score: ${score}`;
+            const score = calculateScore(gameDisplay.textContent.length, timeTaken);
+            scoreMessage.innerHTML = `${Math.floor((gameDisplay.textContent.length - 1) / 2)} ha's<br/>${timeTaken.toFixed(2)} seconds<br>Score: ${score}`;
             scoreMessage.classList.remove('hidden');
             resultDisplay.style.display = 'block';
             setTimeout(function() {
@@ -138,7 +143,7 @@
         }
 
         function calculateScore(has, time) {
-            return Math.round(has / time * 100);
+            return Math.floor(has * (1 + (has / time)));
         }
 
         function resetGame() {
