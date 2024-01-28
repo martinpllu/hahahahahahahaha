@@ -20,7 +20,6 @@
             transform: translate(-50%, -50%);
             font-size: 2rem;
             text-align: center;
-            color: magenta;
         }
         #gameDisplay {
             flex-grow: 1;
@@ -58,6 +57,7 @@
         }
         #tryAgainMessage {
             color: magenta;
+            font-weight: bold;
         }
         .hidden {
             display: none;
@@ -76,6 +76,8 @@
     </div>
 
     <script>
+        const highScoreText = localStorage.getItem('highScore') || '0';
+        let highScore = parseInt(highScoreText);
         let startTime, timerInterval, gameEnded = true, canStart = true;
         const gameDisplay = document.getElementById('gameDisplay');
         const footer = document.getElementById('footer');
@@ -132,7 +134,12 @@
             footer.style.display = 'none';
             const timeTaken = (new Date() - startTime) / 1000;
             const score = calculateScore(gameDisplay.textContent.length, timeTaken);
-            scoreMessage.innerHTML = `${Math.floor((gameDisplay.textContent.length - 1) / 2)} ha's<br/>${timeTaken.toFixed(2)} seconds<br>Score: ${score}`;
+            let scoreText = `Score: ${score}<br>High Score: ${highScore}`
+            if (score > highScore) {
+                scoreText = `<br>New High Score! ${score}`;
+                localStorage.setItem('highScore', score);
+            }
+            scoreMessage.innerHTML = `${Math.floor((gameDisplay.textContent.length - 1) / 2)} ha's<br/>${timeTaken.toFixed(2)} seconds<br>${scoreText}`;
             scoreMessage.classList.remove('hidden');
             resultDisplay.style.display = 'block';
             setTimeout(function() {
