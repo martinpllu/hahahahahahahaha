@@ -137,13 +137,13 @@
             footer.style.display = 'none';
             const timeTaken = (new Date() - startTime) / 1000;
             const score = calculateScore(gameDisplay.textContent.length, timeTaken);
-            let scoreText = `Score: ${score}<br>High Score: ${highScore}`
+            let scoreText = `Score ${score}<br><br>High Score ${highScore}`
             if (score > highScore) {
                 highScore = score;
-                scoreText = `<br>New High Score! ${score}`;
+                scoreText = `<br><span style="color: yellow">New High Score! ${score}</span>`;
                 localStorage.setItem('highScore', score);
             }
-            scoreMessage.innerHTML = `${Math.floor((gameDisplay.textContent.length - 1) / 2)} ha's<br/>${timeTaken.toFixed(2)} seconds<br>${scoreText}`;
+            scoreMessage.innerHTML = `${Math.floor((gameDisplay.textContent.length - 1) / 2)} ha's<br><br>${timeTaken.toFixed(2)}s<br><br>${scoreText}`;
             scoreMessage.classList.remove('hidden');
             resultDisplay.style.display = 'block';
             setTimeout(function() {
