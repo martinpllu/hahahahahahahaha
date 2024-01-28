@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HAHAHA Game</title>
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" /> -->
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+        #startMessage {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 72px;
+            text-align: center;
+        }
+        #gameDisplay {
+            flex-grow: 1;
+            padding: 20px;
+            font-size: 60px;
+            overflow-y: auto;
+            outline: none; /* Remove blue border on focus */
+            color: black; /* Default text color */
+            word-wrap: break-word;
+        }
+        #gameDisplay.error {
+            color: red; /* Text color when game is over */
+        }
+        #footer {
+            background-color: #f8f8f8;
+            padding: 10px;
+            text-align: center;
+            position: sticky;
+            bottom: 0;
+            font-size: 30px;
+        }
+        #result {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 72px;
+            text-align: center;
+            display: none;
+            color: black; /* Text color for game over message */
+        }
+        .error {
+            color: red;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="startMessage">Start typing "hahahahaha"</div>
+    <div id="gameDisplay" tabindex="0"></div> <!-- tabindex for focus -->
+    <div id="footer"></div>
+
+    <div id="result">
+        <div id="gameOverMessage" class="hidden">Game Over!</div>
+        <div id="tryAgainMessage" class="hidden">TRY AGAIN!</div>
+        <div id="scoreMessage" class="hidden"></div>
+    </div>
+
+    <script>
+        let startTime, timerInterval, gameEnded = true, canStart = true;
+        const gameDisplay = document.getElementById('gameDisplay');
+        const footer = document.getElementById('footer');
+        const startMessage = document.getElementById('startMessage');
+        const resultDisplay = document.getElementById('result');
+        const gameOverMessage = document.getElementById('gameOverMessage');
+        const tryAgainMessage = document.getElementById('tryAgainMessage');
+        const scoreMessage = document.getElementById('scoreMessage');
+
+        document.body.addEventListener('keydown', function(event) {
+            if (!canStart) return; // Ignore keydown when game is not ready to start
+            if (gameEnded) {
+                if (canStart && event.key === 'h') {
+                    resetGame();
+                    startGame('h');
+                }
+                return; // Ignore other keys when game is over
+            }
+
+            if (event.key === 'h' || event.key === 'a') {
+                if (gameDisplay.textContent.length === 0 && event.key !== 'h') {
+                    endGame(); // End game if first character is not 'h'
+                    return;
+                }
+                gameDisplay.textContent += event.key;
+                updateFooter(Math.floor(gameDisplay.textContent.length / 2), (new Date() - startTime) / 1000);
+            }
+        });
+
+        function startGame(initialInput = '') {
+            gameDisplay.focus();
+            startTime = new Date();
+            timerInterval = setInterval(updateTime, 100);
+            gameDisplay.textContent = initialInput;
+            startMessage.classList.add('hidden');
+            footer.style.display = 'block';
+            gameDisplay.classList.remove('error');
+            gameEnded = false;
+        }
+
+        function updateTime() {
+            updateFooter(Math.floor(gameDisplay.textContent.length / 2), (new Date() - startTime) / 1000);
+        }
+
+        function updateFooter(has, time) {
+            footer.textContent = `${has} ha's in ${time.toFixed(2)}s`;
+        }
+
+        function endGame() {
+            clearInterval(timerInterval);
+            gameEnded = true;
+            canStart = false;
+            gameDisplay.classList.add('error');
+            footer.style.display = 'none';
+            const timeTaken = (new Date() - startTime) / 1000;
+            const score = calculateScore(Math.floor(gameDisplay.textContent.length / 2), timeTaken);
+            scoreMessage.innerHTML = `${Math.floor(gameDisplay.textContent.length / 2)} ha's<br/>${timeTaken.toFixed(2)}s<br>Score: ${score}`;
+            scoreMessage.classList.remove('hidden');
+            resultDisplay.style.display = 'block';
+            setTimeout(function() {
+                gameOverMessage.classList.add('hidden');
+                tryAgainMessage.classList.remove('hidden');
+                canStart = true;
+            }, 2000); // Delay showing TRY AGAIN for 2 seconds
+        }
+
+        function calculateScore(has, time) {
+            return Math.round(has / time * 100);
+        }
+
+        function resetGame() {
+            clearInterval(timerInterval);
+            gameDisplay.textContent = '';
+            footer.style.display = 'none';
+            resultDisplay.style.display = 'none';
+            gameOverMessage.classList.add('hidden');
+            tryAgainMessage.classList.add('hidden');
+            scoreMessage.classList.add('hidden');
+            gameDisplay.classList.remove('error');
+            startTime = null; // Reset start time
+        }
+
+        // Check for valid game input and end game if invalid
+        setInterval(function() {
+            const text = gameDisplay.textContent;
+            if (!gameEnded && startTime && (text.length > 1 && !alternateCheck(text))) {
+                endGame();
+            }
+        }, 100);
+
+        function alternateCheck(str) {
+            for (let i = 1; i < str.length; i++) {
+                if (str[i] === str[i - 1]) return false;
+            }
+            return true;
+        }
+
+        // Initial focus
+        window.onload = function() {
+            gameDisplay.focus();
+        };
+    </script>
+</body>
+</html>
